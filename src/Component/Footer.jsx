@@ -76,7 +76,7 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="mt-8 pt-6 border-t border-blue-300 text-center">
           <p className="text-sm text-blue-700">
-            &copy; 2024 interestpe. All rights reserved.
+            &copy; 2026 interestpe. All rights reserved.
           </p>
         </div>
       </div>

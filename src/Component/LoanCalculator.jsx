@@ -2,55 +2,52 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { Slider } from "./ui/slider";
 import { Calculator, IndianRupee, Percent } from "lucide-react";
 import { motion } from "framer-motion";
 
+// MUI imports
+import Box from "@mui/material/Box";
+import Slider from "@mui/material/Slider";
+import { styled } from "@mui/material/styles"; // ← Added this import for styled
+
 export const LoanCalculator = () => {
-  // keep state as string for inputs
-  const [loanAmount, setLoanAmount] = useState("0");
-  const [interestRate, setInterestRate] = useState("0");
-  const [loanTerm, setLoanTerm] = useState("0");
+  const [loanAmount, setLoanAmount] = useState("100000");
+  const [interestRate, setInterestRate] = useState("12");
+  const [loanTerm, setLoanTerm] = useState("24");
 
   const [emi, setEmi] = useState(null);
   const [totalInterest, setTotalInterest] = useState(null);
   const [totalPayment, setTotalPayment] = useState(null);
-  const [effectiveInterestRate, setEffectiveInterestRate] = useState(null);
 
   const calculateEMI = () => {
-    const principal = Number(loanAmount); // Loan amount
-    const annualRate = Number(interestRate); // Annual interest rate in %
-    const n = Number(loanTerm); // Time in months
+    const principal = Number(loanAmount);
+    const annualRate = Number(interestRate);
+    const n = Number(loanTerm);
 
-    if (!principal || !annualRate || !n) {
+    if (!principal || principal <= 0 || !annualRate || !n || n <= 0) {
       setEmi(null);
       setTotalInterest(null);
       setTotalPayment(null);
-      setEffectiveInterestRate(null);
       return;
     }
 
-    const rate = annualRate / 12 / 100; // Monthly interest rate
+    const rate = annualRate / 12 / 100;
 
-    // EMI formula (reducing balance method)
     const emiCalc =
       (principal * rate * Math.pow(1 + rate, n)) / (Math.pow(1 + rate, n) - 1);
 
-    const totalPay = emiCalc * n; // Total payment over the loan term
-    const totalInt = totalPay - principal; // Total interest paid
-    const effectiveIntRate = (totalInt / principal / (n / 12)) * 100; // Effective annual rate
+    const totalPay = emiCalc * n;
+    const totalInt = totalPay - principal;
 
     setEmi(emiCalc.toFixed(2));
     setTotalInterest(totalInt.toFixed(2));
     setTotalPayment(totalPay.toFixed(2));
-    setEffectiveInterestRate(effectiveIntRate.toFixed(2));
   };
 
   useEffect(() => {
     calculateEMI();
   }, [loanAmount, interestRate, loanTerm]);
 
-  // Animation variants
   const cardVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -87,6 +84,40 @@ export const LoanCalculator = () => {
     }),
   };
 
+  // Define a larger, more prominent slider style
+  const LargeSlider = styled(Slider)(({ theme }) => ({
+    height: 5, // Thicker track
+    padding: "13px 0", // More space for thumb
+    "& .MuiSlider-thumb": {
+      height: 18,
+      width: 18,
+      backgroundColor: "#fff",
+      border: "4px solid #2563eb", // Blue border to match your theme
+      boxShadow: "0 3px 6px rgba(0,0,0,0.16)",
+      "&:focus, &:hover, &.Mui-active, &.Mui-focusVisible": {
+        boxShadow: "0 0 0 12px rgba(37, 99, 235, 0.16)", // Larger hover glow
+      },
+    },
+    "& .MuiSlider-track": {
+      height: 7,
+      background: "linear-gradient(to right, #3b82f6, #1e40af)", // Your gradient
+      border: "none",
+    },
+    "& .MuiSlider-rail": {
+      height: 7,
+      opacity: 0.5,
+      backgroundColor: "#bfdbfe", // Light blue rail
+    },
+    "& .MuiSlider-valueLabel": {
+      fontSize: 14,
+      padding: 6,
+      backgroundColor: "#2563eb", // Blue label background
+      borderRadius: 4,
+      color: "#fff",
+      top: -8, // Position label higher
+    },
+  }));
+
   return (
     <div className="min-h-screen bg-inherit flex items-center justify-center p-4">
       <motion.div
@@ -108,7 +139,9 @@ export const LoanCalculator = () => {
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row gap-8">
               {/* Input Section */}
-              <div className="flex-1 space-y-6">
+              <div className="flex-1 space-y-8">
+                {" "}
+                {/* Increased spacing for larger sliders */}
                 {/* Loan Amount */}
                 <motion.div
                   variants={inputVariants}
@@ -125,19 +158,23 @@ export const LoanCalculator = () => {
                     onChange={(e) => setLoanAmount(e.target.value)}
                     className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900 transition-all duration-200"
                   />
-                  <Slider
-                    min={1000}
-                    max={500000}
-                    step={10000}
-                    value={[Number(loanAmount) || 0]}
-                    onValueChange={(value) => setLoanAmount(String(value[0]))}
-                    className="mt-3 h-2 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full [&>span]:bg-white [&>span]:border-2 [&>span]:border-blue-600"
-                  />
-                  <span className="text-sm text-blue-700">
+
+                  <Box sx={{ width: "100%", py: 3 }}>
+                    <LargeSlider
+                      min={1000}
+                      max={500000}
+                      step={10000}
+                      value={Number(loanAmount) || 100000}
+                      onChange={(_, val) => setLoanAmount(String(val))}
+                      valueLabelDisplay="auto" // Popup on drag/hover
+                      valueLabelFormat={(v) => `₹${v.toLocaleString()}`}
+                    />
+                  </Box>
+
+                  <span className="text-sm text-blue-700 block mt-1">
                     ₹{Number(loanAmount || 0).toLocaleString()}
                   </span>
                 </motion.div>
-
                 {/* Interest Rate */}
                 <motion.div
                   variants={inputVariants}
@@ -155,20 +192,24 @@ export const LoanCalculator = () => {
                     className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900 transition-all duration-200"
                     step="0.1"
                   />
-                  <Slider
-                    min={1}
-                    max={36}
-                    step={0.1}
-                    value={[Number(interestRate) || 0]}
-                    onValueChange={(value) => setInterestRate(String(value[0]))}
-                    className="mt-3 h-2 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full [&>span]:bg-white [&>span]:border-2 [&>span]:border-blue-600"
-                  />
-                  <span className="text-sm text-blue-700">
+
+                  <Box sx={{ width: "100%", py: 3 }}>
+                    <LargeSlider
+                      min={1}
+                      max={36}
+                      step={0.1}
+                      value={Number(interestRate) || 10}
+                      onChange={(_, val) => setInterestRate(String(val))}
+                      valueLabelDisplay="auto"
+                      valueLabelFormat={(v) => `${v}%`}
+                    />
+                  </Box>
+
+                  <span className="text-sm text-blue-700 block mt-1">
                     {interestRate || "0"}%
                   </span>
                 </motion.div>
                 {/* Loan Term */}
-
                 <motion.div
                   variants={inputVariants}
                   initial="hidden"
@@ -184,15 +225,20 @@ export const LoanCalculator = () => {
                     onChange={(e) => setLoanTerm(e.target.value)}
                     className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900 transition-all duration-200"
                   />
-                  <Slider
-                    min={1}
-                    max={360} // 30 years in months
-                    step={1}
-                    value={[Number(loanTerm) || 0]}
-                    onValueChange={(value) => setLoanTerm(String(value[0]))}
-                    className="mt-3 h-2 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full [&>span]:bg-white [&>span]:border-2 [&>span]:border-blue-600"
-                  />
-                  <span className="text-sm text-blue-700">
+
+                  <Box sx={{ width: "100%", py: 3 }}>
+                    <LargeSlider
+                      min={1}
+                      max={360}
+                      step={1}
+                      value={Number(loanTerm) || 12}
+                      onChange={(_, val) => setLoanTerm(String(val))}
+                      valueLabelDisplay="auto"
+                      valueLabelFormat={(v) => `${v} mo`}
+                    />
+                  </Box>
+
+                  <span className="text-sm text-blue-700 block mt-1">
                     {loanTerm || "0"} Months
                   </span>
                 </motion.div>
@@ -224,6 +270,7 @@ export const LoanCalculator = () => {
                         ₹{Number(emi).toLocaleString()}
                       </span>
                     </motion.div>
+
                     <motion.div
                       className="flex justify-between"
                       variants={resultItemVariants}
@@ -238,6 +285,7 @@ export const LoanCalculator = () => {
                         ₹{Number(totalInterest).toLocaleString()}
                       </span>
                     </motion.div>
+
                     <motion.div
                       className="flex justify-between"
                       variants={resultItemVariants}

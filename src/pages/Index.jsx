@@ -22,7 +22,7 @@ const Index = () => {
         </section> */}
 
         {/* Footer */}
-        <section className="mb-5">
+        <section className="mb-1">
           <Footer />
         </section>
       </div>
