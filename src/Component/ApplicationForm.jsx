@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -20,7 +21,7 @@ import {
   CreditCard,
   Loader2,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export const ApplicationForm = () => {
   const { toast } = useToast();
@@ -37,6 +38,7 @@ export const ApplicationForm = () => {
     panCard: "",
     address: "",
   });
+  const navigate = useNavigate();
 
   // Your specific Google Apps Script URL
   // Inside your ApplicationForm component
@@ -148,6 +150,37 @@ export const ApplicationForm = () => {
       opacity: 1,
       y: 0,
       transition: { duration: 0.4, delay: 1.0, ease: "easeOut" },
+    },
+  };
+
+  const backdropVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.3 } },
+    exit: { opacity: 0, transition: { duration: 0.2 } },
+  };
+
+  const popupVariants = {
+    hidden: {
+      opacity: 0,
+      scale: 0.75,
+      y: 40,
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 25,
+        duration: 0.4,
+      },
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.7,
+      y: -20,
+      transition: { duration: 0.25 },
     },
   };
 
@@ -504,25 +537,55 @@ export const ApplicationForm = () => {
         </Card>
       </motion.div>
 
-      {showSuccess && (
-        <div className="fixed top-100 right-130 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl p-6 text-center w-[90%] max-w-sm z-50 animate-slide-in">
-          <div className=" flex items-start gap-3">
-            <div className="text-white-6 text-2xl mt-[-5px]">✅</div>
-            <div className="flex-1">
-              <h3 className="font-semibold">
-                Application Submitted Successfully
-              </h3>
-              <p className="text-sm mt-1">Our team will contact you soon.</p>
+      <AnimatePresence>
+        {showSuccess && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+              variants={backdropVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={() => setShowSuccess(false)} // ← click outside to close (optional)
+            />
+
+            {/* Centered Popup */}
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <motion.div
+                className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl p-6 text-center w-[90%] max-w-sm shadow-2xl"
+                variants={popupVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                <div className="flex flex-col items-center gap-4">
+                  <div className="text-5xl">✅</div>
+
+                  <div>
+                    <h3 className="font-bold text-xl">
+                      Application Submitted Successfully
+                    </h3>
+                    <p className="text-sm mt-1 text-blue-100">
+                      Our team will contact you soon.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setShowSuccess(false);
+                      navigate("/");
+                    }}
+                    className="px-8 py-3 bg-white/15 hover:bg-white/25 hover:cursor-pointer text-white rounded-lg font-medium transition"
+                  >
+                    OK
+                  </button>
+                </div>
+              </motion.div>
             </div>
-            <button
-              onClick={() => setShowSuccess(false)}
-              className="text-white-400 hover:text-white-600 hover:cursor-pointer"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
