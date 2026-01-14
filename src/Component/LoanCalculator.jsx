@@ -165,9 +165,12 @@ export const LoanCalculator = () => {
                       max={500000}
                       step={10000}
                       value={Number(loanAmount) || 100000}
-                      onChange={(_, val) => setLoanAmount(String(val))}
-                      valueLabelDisplay="auto" // Popup on drag/hover
+                      onChange={(event, newValue) => {
+                        setLoanAmount(newValue.toString()); // 👈 smooth live update
+                      }}
+                      valueLabelDisplay="on"
                       valueLabelFormat={(v) => `₹${v.toLocaleString()}`}
+                      disableSwap
                     />
                   </Box>
 

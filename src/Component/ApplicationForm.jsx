@@ -41,7 +41,7 @@ export const ApplicationForm = () => {
   // Your specific Google Apps Script URL
   // Inside your ApplicationForm component
   const SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbzuwmpunGA2e3j6y-iUe0PUVEcsdKKi9JTqRDwjY35gf90Vb25U7dqkUWPxWYx5jsW4Cw/exec";
+    "https://script.google.com/macros/s/AKfycbzPIdaiIZcF6hk8DZx-2nUIZ9vabH26yKoMkUVKQR11ZQyDoFrgPVKROzhgwWUV3VPAAQ/exec";
 
   const handleSubmit = async (e) => {
     // debugger; // 👈 execution will pause here
