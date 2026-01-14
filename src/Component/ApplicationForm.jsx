@@ -11,11 +11,21 @@ import {
   SelectValue,
 } from "./ui/select";
 import { useToast } from "../hooks/use-toast";
-import { FileText, User, Phone, Mail, MapPin, CreditCard } from "lucide-react";
+import {
+  FileText,
+  User,
+  Phone,
+  Mail,
+  MapPin,
+  CreditCard,
+  Loader2,
+} from "lucide-react";
 import { motion } from "framer-motion";
 
 export const ApplicationForm = () => {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -28,20 +38,74 @@ export const ApplicationForm = () => {
     address: "",
   });
 
-  const handleSubmit = (e) => {
+  // Your specific Google Apps Script URL
+  // Inside your ApplicationForm component
+  const SCRIPT_URL =
+    "https://script.google.com/macros/s/AKfycbzuwmpunGA2e3j6y-iUe0PUVEcsdKKi9JTqRDwjY35gf90Vb25U7dqkUWPxWYx5jsW4Cw/exec";
+
+  const handleSubmit = async (e) => {
+    // debugger; // 👈 execution will pause here
+
     e.preventDefault();
-    toast({
-      title: "Application Submitted!",
-      description:
-        "We'll review your application and get back to you within 24 hours.",
-    });
+    setIsSubmitting(true);
+
+    try {
+      // debugger;
+
+      console.log("Form Data:", formData);
+
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      // debugger;
+
+      setShowSuccess(true);
+
+      toast({
+        title: "Application Submitted!",
+        description:
+          "Your application has been recorded in our system. We'll get back to you within 24 hours.",
+      });
+
+      setFormData({
+        fullName: "",
+        email: "",
+        phone: "",
+        employment: "",
+        monthlyIncome: "",
+        loanAmount: "",
+        purpose: "",
+        panCard: "",
+        address: "",
+      });
+    } catch (error) {
+      // debugger; // 👈 pause on error
+
+      console.error("Submission error:", error);
+
+      toast({
+        variant: "destructive",
+        title: "Submission Failed",
+        description:
+          "Could not reach the server. Please check your connection.",
+      });
+    } finally {
+      // debugger; // 👈 pause before finishing
+      setIsSubmitting(false);
+    }
   };
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Animation variants for the main container
+  // --- Animation Variants ---
   const containerVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -51,7 +115,6 @@ export const ApplicationForm = () => {
     },
   };
 
-  // Animation variants for the card
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.95 },
     visible: {
@@ -61,7 +124,6 @@ export const ApplicationForm = () => {
     },
   };
 
-  // Animation variants for form sections
   const sectionVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: (index) => ({
@@ -71,7 +133,6 @@ export const ApplicationForm = () => {
     }),
   };
 
-  // Animation variants for input fields and buttons
   const inputVariants = {
     hidden: { opacity: 0, x: -20 },
     visible: (index) => ({
@@ -81,7 +142,6 @@ export const ApplicationForm = () => {
     }),
   };
 
-  // Animation variants for the note section
   const noteVariants = {
     hidden: { opacity: 0, y: 10 },
     visible: {
@@ -144,13 +204,12 @@ export const ApplicationForm = () => {
                     </Label>
                     <Input
                       id="fullName"
-                      type="text"
                       placeholder="Enter your full name"
                       value={formData.fullName}
                       onChange={(e) =>
                         handleInputChange("fullName", e.target.value)
                       }
-                      className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900 transition-all duration-200"
+                      className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900"
                       required
                     />
                   </motion.div>
@@ -174,7 +233,7 @@ export const ApplicationForm = () => {
                       onChange={(e) =>
                         handleInputChange("phone", e.target.value)
                       }
-                      className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900 transition-all duration-200"
+                      className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900"
                       required
                     />
                   </motion.div>
@@ -198,7 +257,7 @@ export const ApplicationForm = () => {
                       onChange={(e) =>
                         handleInputChange("email", e.target.value)
                       }
-                      className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900 transition-all duration-200"
+                      className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900"
                       required
                     />
                   </motion.div>
@@ -216,7 +275,6 @@ export const ApplicationForm = () => {
                     </Label>
                     <Input
                       id="panCard"
-                      type="text"
                       placeholder="ABCDE1234F"
                       value={formData.panCard}
                       onChange={(e) =>
@@ -225,7 +283,7 @@ export const ApplicationForm = () => {
                           e.target.value.toUpperCase()
                         )
                       }
-                      className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900 transition-all duration-200"
+                      className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900"
                       required
                     />
                   </motion.div>
@@ -244,13 +302,12 @@ export const ApplicationForm = () => {
                     </Label>
                     <Input
                       id="address"
-                      type="text"
                       placeholder="Enter your current address"
                       value={formData.address}
                       onChange={(e) =>
                         handleInputChange("address", e.target.value)
                       }
-                      className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900 transition-all duration-200"
+                      className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900"
                       required
                     />
                   </motion.div>
@@ -288,7 +345,7 @@ export const ApplicationForm = () => {
                         handleInputChange("employment", value)
                       }
                     >
-                      <SelectTrigger className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900 transition-all duration-200">
+                      <SelectTrigger className="mt-2 border-blue-300 rounded-lg text-blue-900">
                         <SelectValue placeholder="Select employment type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -321,7 +378,7 @@ export const ApplicationForm = () => {
                       onChange={(e) =>
                         handleInputChange("monthlyIncome", e.target.value)
                       }
-                      className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900 transition-all duration-200"
+                      className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900"
                       required
                     />
                   </motion.div>
@@ -361,7 +418,7 @@ export const ApplicationForm = () => {
                       onChange={(e) =>
                         handleInputChange("loanAmount", e.target.value)
                       }
-                      className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900 transition-all duration-200"
+                      className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900"
                       required
                     />
                   </motion.div>
@@ -383,7 +440,7 @@ export const ApplicationForm = () => {
                         handleInputChange("purpose", value)
                       }
                     >
-                      <SelectTrigger className="mt-2 border-blue-300 focus:border-blue-600 focus:ring focus:ring-blue-200 rounded-lg text-blue-900 transition-all duration-200">
+                      <SelectTrigger className="mt-2 border-blue-300 rounded-lg text-blue-900">
                         <SelectValue placeholder="Select loan purpose" />
                       </SelectTrigger>
                       <SelectContent>
@@ -429,15 +486,43 @@ export const ApplicationForm = () => {
               >
                 <Button
                   type="submit"
-                  className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-200"
+                  disabled={isSubmitting}
+                  className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-200 flex items-center justify-center"
                 >
-                  Submit Application
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    "Submit Application"
+                  )}
                 </Button>
               </motion.div>
             </form>
           </CardContent>
         </Card>
       </motion.div>
+
+      {showSuccess && (
+        <div className="fixed top-100 right-130 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl p-6 text-center w-[90%] max-w-sm z-50 animate-slide-in">
+          <div className=" flex items-start gap-3">
+            <div className="text-white-6 text-2xl mt-[-5px]">✅</div>
+            <div className="flex-1">
+              <h3 className="font-semibold">
+                Application Submitted Successfully
+              </h3>
+              <p className="text-sm mt-1">Our team will contact you soon.</p>
+            </div>
+            <button
+              onClick={() => setShowSuccess(false)}
+              className="text-white-400 hover:text-white-600 hover:cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 };
