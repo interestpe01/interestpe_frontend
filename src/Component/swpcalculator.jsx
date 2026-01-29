@@ -7,10 +7,10 @@ import { Label } from "./ui/label";
 import { IndianRupee, Percent, Calendar, Calculator } from "lucide-react";
 
 export const SwpCalculator = () => {
-  const [investment, setInvestment] = useState(40000000); // 4 Cr
-  const [withdrawal, setWithdrawal] = useState(200000); // 2 Lakh
-  const [rate, setRate] = useState(10); // %
-  const [years, setYears] = useState(4);
+  const [investment, setInvestment] = useState(100000); // 4 Cr
+  const [withdrawal, setWithdrawal] = useState(1000); // 2 Lakh
+  const [rate, setRate] = useState(1); // %
+  const [years, setYears] = useState(1);
 
   const [finalValue, setFinalValue] = useState(0);
   const [totalWithdrawn, setTotalWithdrawn] = useState(0);
@@ -108,11 +108,23 @@ export const SwpCalculator = () => {
                   <IndianRupee className="w-4 h-4 text-blue-600" />
                   Initial Investment
                 </Label>
-                <Input
+                  <Input
                   type="number"
                   value={investment}
-                  onChange={(e) => setInvestment(+e.target.value || 0)}
-                  className="mt-2 border-blue-300 rounded-lg"
+                    onChange={(e) => {
+                    const val = Number(e.target.value);
+                    if (e.target.value === "") {
+                      setInvestment("");
+                    } else if (val > 100000000) {
+                      setInvestment(100000000);
+                    }
+                     else if (val >=0) {
+                      setInvestment(val);
+                    }
+                  }}
+                  onBlur={() => !investment && setInvestment(0)}
+                  className="mt-2 border-blue-300 rounded-lg focus-visible:ring-blue-500"
+                  placeholder="0"
                 />
               </div>
 
@@ -122,11 +134,23 @@ export const SwpCalculator = () => {
                   <IndianRupee className="w-4 h-4 text-blue-600" />
                   Monthly Withdrawal
                 </Label>
-                <Input
+                 <Input
                   type="number"
                   value={withdrawal}
-                  onChange={(e) => setWithdrawal(+e.target.value || 0)}
-                  className="mt-2 border-blue-300 rounded-lg"
+                    onChange={(e) => {
+                    const val = Number(e.target.value);
+                    if (e.target.value === "") {
+                      setWithdrawal("");
+                    } else if (val > 1500000) {
+                      setWithdrawal(1500000);
+                    }
+                     else if (val >=0) {
+                      setWithdrawal(val);
+                    }
+                  }}
+                  onBlur={() => !withdrawal && setWithdrawal(0)}
+                  className="mt-2 border-blue-300 rounded-lg focus-visible:ring-blue-500"
+                  placeholder="0"
                 />
               </div>
 
@@ -135,19 +159,32 @@ export const SwpCalculator = () => {
                 <Label className="flex items-center gap-2 text-blue-900 font-semibold">
                   <span className="flex items-center gap-2">
                     <Percent className="w-4 h-4 text-blue-600" />
-                    Expected Return (p.a.)
+                    Expected CAGR (p.a.)
                   </span>
                   <span className="text-blue-700 font-semibold">{rate}%</span>
                 </Label>
                 <Input
                   type="number"
                   step="0.1"
-                  value={rate}
-                  onChange={(e) => setRate(+e.target.value || 0)}
+                   value={rate}
+                    onChange={(e) => {
+                    const val = Number(e.target.value);
+                    if (e.target.value === "") {
+                      setRate("");
+                    } else if (val > 36) {
+                      setRate(36);
+                    }
+                     else if (val >=0) {
+                      setRate(val);
+                    }
+                  }}
+                  onBlur={() => !rate && setRate(0)}
                   className="mt-2 mb-7 border-blue-300 rounded-lg"
                 />
 
-                {Slider(rate, setRate, 1, 18, 1, (v) => `${v}%`)}
+                
+
+                {Slider(rate, setRate, 1, 36, 1, (v) => `${v}%`)}
               </div>
 
               {/* Years */}
@@ -155,7 +192,7 @@ export const SwpCalculator = () => {
                 <Label className="flex items-center gap-2 text-blue-900 font-semibold">
                   <span className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-blue-600" />
-                    Time Period
+                    SWP Time Period
                   </span>
                   <span className="text-blue-700 font-semibold">
                     {years} yrs
@@ -163,8 +200,19 @@ export const SwpCalculator = () => {
                 </Label>
                 <Input
                   type="number"
-                  value={years}
-                  onChange={(e) => setYears(+e.target.value || 1)}
+                   value={years}
+                    onChange={(e) => {
+                    const val = Number(e.target.value);
+                    if (e.target.value === "") {
+                      setYears("");
+                    } else if (val > 40) {
+                      setYears(40);
+                    }
+                     else if (val >=0) {
+                      setYears(val);
+                    }
+                  }}
+                  onBlur={() => !years && setYears(0)}
                   className="mt-2 mb-7 border-blue-300 rounded-lg"
                 />
 
