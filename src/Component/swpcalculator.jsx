@@ -159,7 +159,7 @@ export const SwpCalculator = () => {
                 <Label className="flex items-center gap-2 text-blue-900 font-semibold">
                   <span className="flex items-center gap-2">
                     <Percent className="w-4 h-4 text-blue-600" />
-                    Expected CAGR (p.a.)
+                    Expected CAGR (p.a)
                   </span>
                   <span className="text-blue-700 font-semibold">{rate}%</span>
                 </Label>
@@ -232,13 +232,13 @@ export const SwpCalculator = () => {
 
               <div className="space-y-4 text-sm">
                 <div className="flex justify-between">
-                  <p className="font-semibold text-blue-900">Initial</p>
+                  <p className="font-semibold text-blue-900">Initial Investment</p>
                   <p className="text-blue-700 font-medium">
                     ₹ {investment.toLocaleString("en-IN")}
                   </p>
                 </div>
                 <div className="flex justify-between">
-                  <p className="font-semibold text-blue-900">Withdrawn</p>
+                  <p className="font-semibold text-blue-900">Total Withdrawn</p>
                   <p className="text-blue-700 font-medium">
                     ₹ {totalWithdrawn.toLocaleString("en-IN")}
                   </p>

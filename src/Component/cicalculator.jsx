@@ -175,9 +175,9 @@ export const CiCalculator = () => {
                     const val = Number(e.target.value);
                     if (e.target.value === "") {
                       setLoanTerm("");
-                    } else if (val > 40) {
-                      setLoanTerm(40);
-                      if (investStay < 40) setInvestStay(40);
+                    } else if (val > 50) {
+                      setLoanTerm(50);
+                      if (investStay < 50) setInvestStay(50);
                     } else if (val >= 0) {
                       setLoanTerm(val);
                       if (investStay < val) setInvestStay(val);
@@ -190,12 +190,12 @@ export const CiCalculator = () => {
                 {renderSlider(Number(loanTerm) || 0, (val) => {
                     setLoanTerm(val);
                     if (investStay < val) setInvestStay(val);
-                }, 0, 40, 1)}
+                }, 0, 50, 1)}
               </div>
 
               <div>
                 <Label className="text-blue-900 font-semibold">
-                  Stay invested for
+                  Years you stay invested for
                 </Label>
                 <Input
                   type="number"
@@ -203,7 +203,7 @@ export const CiCalculator = () => {
                   onChange={(e) => {
                     const val = Number(e.target.value);
                     if (e.target.value === "") setInvestStay("");
-                    else if (val > 50) setInvestStay(50);
+                    else if (val > 60) setInvestStay(60);
                     else if (val >= 0) setInvestStay(val);
                   }}
                   onBlur={() => {
@@ -216,12 +216,12 @@ export const CiCalculator = () => {
                 {renderSlider(Number(investStay) || 0, (val) => {
                      const safeVal = Math.max(val, Number(loanTerm) || 0);
                      setInvestStay(safeVal);
-                }, 0, 50, 1)}
+                }, 0, 60, 1)}
               </div>
 
               <div>
                 <Label className="flex items-center gap-2 text-blue-900 font-semibold">
-                  <Percent size={16} /> Expected CAGR (%)
+                  <Percent size={16} /> Expected CAGR (p.a)
                 </Label>
                 <Input
                   type="number"

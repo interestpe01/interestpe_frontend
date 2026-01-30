@@ -7,9 +7,9 @@ import { motion } from "framer-motion";
 import { Range } from "react-range";
 
 export const LoanCalculator = () => {
-  const [loanAmount, setLoanAmount] = useState(100000);
-  const [interestRate, setInterestRate] = useState(12);
-  const [loanTerm, setLoanTerm] = useState(24);
+  const [loanAmount, setLoanAmount] = useState(10000);
+  const [interestRate, setInterestRate] = useState(1);
+  const [loanTerm, setLoanTerm] = useState(1);
 
   const [emi, setEmi] = useState(null);
   const [totalInterest, setTotalInterest] = useState(null);
@@ -98,13 +98,15 @@ export const LoanCalculator = () => {
         animate="visible"
       >
         <Card className="shadow-xl rounded-xl bg-white border border-blue-200">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-t-xl p-6">
-            <CardTitle className="flex items-center gap-3 text-2xl font-bold">
-              <Calculator size={24} /> InterestPe Loan Calculator
+      
+           <CardHeader className="bg-gradient-to-r from-blue-700 to-indigo-600 text-white p-6">
+            <CardTitle className="flex items-center gap-3">
+              <Calculator />
+              <div>
+                <h1 className="text-2xl font-bold">Loan EMI Calculator</h1>
+                <p className="text-sm text-blue-100">Powered by interestpe</p>
+              </div>
             </CardTitle>
-            <p className="text-sm text-blue-100 mt-1">
-              Befikar lending for your financial needs
-            </p>
           </CardHeader>
 
           <CardContent className="p-6">
@@ -120,11 +122,22 @@ export const LoanCalculator = () => {
                   <Input
                     type="number"
                     value={loanAmount}
-                    onChange={(e) => setLoanAmount(Number(e.target.value))}
+                    onChange={(e) =>{
+                      const val = Number(e.target.value);
+                      if (e.target.value === "") {
+                        setLoanAmount("");
+                      } else if (val > 10000000) {
+                        setLoanAmount(10000000);
+                      } else if (val >=  0 ) {
+                        setLoanAmount(val);
+                      }
+                    }}
+                    onBlur={()=> !loanAmount && setLoanAmount(0)}
                     className="mt-2 border-blue-300 rounded-lg"
+                    placeholder="0"
                   />
 
-                  {renderSlider(loanAmount, setLoanAmount, 1000, 500000, 10000)}
+                  {/* {renderSlider(loanAmount, setLoanAmount, 1000, 500000, 10000)} */}
 
                   <span className="text-sm text-blue-700">
                     ₹{loanAmount.toLocaleString()}
@@ -134,18 +147,31 @@ export const LoanCalculator = () => {
                 {/* Interest Rate */}
                 <div>
                   <Label className="flex items-center gap-2 text-blue-900 font-semibold">
-                    <Percent size={16} /> Interest Rate (% p.a.)
+                    <Percent size={16} /> Interest Rate (% p.a)
                   </Label>
 
                   <Input
                     type="number"
                     value={interestRate}
                     step="0.1"
-                    onChange={(e) => setInterestRate(Number(e.target.value))}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      if (e.target.value === "") {
+                        setInterestRate("");
+                      } else if (val > 36) {
+                        setInterestRate(36);
+                      } else if (val < 1) {
+                        setInterestRate(1);
+                      } else {
+                        setInterestRate(val);
+                      }
+                    }}
+                    onBlur={()=> !interestRate && setInterestRate(0)}
                     className="mt-2 border-blue-300 rounded-lg"
+                    placeholder="0"
                   />
 
-                  {renderSlider(interestRate, setInterestRate, 1, 36, 0.1)}
+                  {renderSlider(interestRate, setInterestRate, 0, 36, 1)}
 
                   <span className="text-sm text-blue-700">{interestRate}%</span>
                 </div>
@@ -159,11 +185,24 @@ export const LoanCalculator = () => {
                   <Input
                     type="number"
                     value={loanTerm}
-                    onChange={(e) => setLoanTerm(Number(e.target.value))}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      if (e.target.value === "") {
+                        setLoanTerm("");
+                      } else if (val > 360) {
+                        setLoanTerm(360);
+                      } else if (val < 1) {
+                        setLoanTerm(1);
+                      } else {
+                        setLoanTerm(val);
+                      }
+                    }}
+                    onBlur={()=> !loanTerm && setLoanTerm(0)}
                     className="mt-2 border-blue-300 rounded-lg"
+                    placeholder="0"
                   />
 
-                  {renderSlider(loanTerm, setLoanTerm, 1, 360, 1)}
+                  {renderSlider(loanTerm, setLoanTerm, 0, 360, 1)}
 
                   <span className="text-sm text-blue-700">
                     {loanTerm} Months
